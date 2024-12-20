@@ -1,0 +1,15 @@
+<div>
+  <input type="file" (change)="onImageUpload($event)" />
+  <p *ngIf="processingTime !== null">
+    Processing Time: {{ processingTime.toFixed(2) }} seconds
+  </p>
+
+  <button
+    *ngIf="boundingBoxes.length > 0"
+    (click)="blurSelectedFaces()"
+  >
+    Blur Selected Faces
+  </button>
+
+  <canvas></canvas>
+</div>
