@@ -1,34 +1,25 @@
-input {
-  margin: 1rem;
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-input::file-selector-button {
-  font-weight: bold;
-  color: dodgerblue;
-  padding: 0.5em;
-  border: thin solid grey;
-  border-radius: 3px;
-}
-
-canvas {
-    border: thick solid black;
-    margin: 1rem;
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 table {
-  padding: 10px;
-  margin: 10px 0;
-  border-collapse: collapse;
   width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
 th, td {
   border: 1px solid #ddd;
   padding: 8px;
-  text-align: center;
 }
 
 th {
-  background-color: #f2f2f2;
-  font-weight: bold;
+  background-color: #f4f4f4;
 }

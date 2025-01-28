@@ -10,51 +10,42 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./lanyard.component.css'],
 })
 export class LanyardComponent {
-  boundingBoxes: any[] = []; // Store bounding box data
+  uploadedImage: File | null = null;
+  segmentedResults: any[] = [];
+  segmentedImage: string = '';
   processingTime: number | null = null;
-  selectedBoxes: Set<number> = new Set(); // Keep track of selected boxes
 
   constructor(private http: HttpClient) {}
-  onImageUpload(event: Event): void {
-    const input = event.target as HTMLInputElement;
 
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      const formData = new FormData();
-      formData.append('image', file);
-
-
+  onImageUpload(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      this.uploadedImage = target.files[0];
     }
   }
 
-  blurSelectedFaces(): void {
-    const selectedCoordinates = Array.from(this.selectedBoxes).map(
-      (index) => this.boundingBoxes[index]
-    );
+  processImage() {
+    if (this.uploadedImage) {
+      const formData = new FormData();
+      formData.append('image', this.uploadedImage);
 
-    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-    if (!fileInput?.files?.[0]) {
-      console.error('No image file available for upload');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('image', fileInput.files[0]);
-    formData.append('boxes', JSON.stringify(selectedCoordinates));
-
-    // Send image and selected bounding boxes to the server
-    this.http.post('http://localhost:5678/blur-faces', formData, { responseType: 'blob' })
-      .subscribe(
+      this.http.post<any>('http://localhost:5678/process-image', formData).subscribe(
         (response) => {
-          const url = URL.createObjectURL(response);
-          const img = document.createElement('img');
-          img.src = url;
-          document.body.appendChild(img); // Or replace the existing canvas/image
+          // Convert the hex string back to binary data
+          const hex = response.segmented_image;
+          const binaryString = hex.match(/.{1,2}/g)?.map((byte: string) => String.fromCharCode(parseInt(byte, 16))).join('');
+          const base64String = btoa(binaryString);
+
+          // Set the segmented image to be displayed
+          this.segmentedImage = `data:image/jpeg;base64,${base64String}`;
+          this.segmentedResults = response.segmented_found;
+          this.processingTime = response.processing_time;
         },
         (error) => {
-          console.error('Error blurring faces:', error);
+          console.error('Error uploading image', error);
         }
       );
+    }
   }
 
 }

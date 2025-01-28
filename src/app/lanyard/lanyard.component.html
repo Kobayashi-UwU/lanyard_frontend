@@ -1,15 +1,40 @@
-<div>
-  <input type="file" (change)="onImageUpload($event)" />
-  <p *ngIf="processingTime !== null">
-    Processing Time: {{ processingTime.toFixed(2) }} seconds
-  </p>
+<div class="container">
+  <h1>Lanyard Image Processing</h1>
+  <input type="file" (change)="onImageUpload($event)" accept="image/*" />
+  <button (click)="processImage()">Process Image</button>
 
-  <button
-    *ngIf="boundingBoxes.length > 0"
-    (click)="blurSelectedFaces()"
-  >
-    Blur Selected Faces
-  </button>
+  <div *ngIf="segmentedImage">
+    <h2>Processed Image</h2>
+    <img [src]="segmentedImage" alt="Segmented Image" />
+  </div>
 
-  <canvas></canvas>
+  <div *ngIf="segmentedResults.length > 0">
+    <h2>Segmented Results</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Location (x, y, w, h)</th>
+          <th>Color (R, G, B)</th>
+          <th>Sample Color</th> <!-- New column for displaying the sample color -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let result of segmentedResults">
+          <td>{{ result.location.join(', ') }}</td>
+          <td>{{ result.color.join(', ') }}</td>
+          <td>
+            <div 
+              *ngIf="result.color.length === 3"
+              [style.background-color]="'rgb(' + result.color.join(', ') + ')'"
+              style="width: 40px; height: 20px; border: 1px solid #ccc;">
+            </div>
+          </td> <!-- Color sample block -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="processingTime !== null">
+    <p>Processing Time: {{ processingTime }} seconds</p>
+  </div>
 </div>
