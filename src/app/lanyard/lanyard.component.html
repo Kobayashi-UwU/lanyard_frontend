@@ -13,9 +13,10 @@
     <table>
       <thead>
         <tr>
-          <th>Location (x, y, w, h)</th>
+          <th>Bounding Box (x, y, w, h)</th>
           <th>Color (R, G, B)</th>
-          <th>Sample Color</th> <!-- New column for displaying the sample color -->
+          <th>Sample Color</th>
+          <th>Segmentation Points</th> <!-- New column for displaying the sample color -->
         </tr>
       </thead>
       <tbody>
@@ -28,8 +29,16 @@
               [style.background-color]="'rgb(' + result.color.join(', ') + ')'"
               style="width: 40px; height: 20px; border: 1px solid #ccc;">
             </div>
-          </td> <!-- Color sample block -->
+          </td>
+          <td>
+            <ul>
+              <li *ngFor="let point of result.segmentation_points">
+                ({{ point[0] }}, {{ point[1] }})
+              </li>
+            </ul>
+          </td>
         </tr>
+
       </tbody>
     </table>
   </div>
